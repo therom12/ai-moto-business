@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Moto Business | Panel</title>
+<style>
+:root{--bg:#0b1018;--panel:#131c28;--panel2:#182434;--line:#263448;--text:#edf4fb;--muted:#9aaabd;--lime:#b7f34a;--red:#ff7272;--blue:#78b9ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{padding:22px 18px;background:#0e1621;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:2}
+.brand{display:flex;align-items:center;gap:12px}.logo{display:grid;place-items:center;width:44px;height:44px;border-radius:13px;background:var(--lime);color:#10170b;font-weight:900;font-size:22px}
+h1{font-size:20px;margin:0}header p{margin:2px 0 0;color:var(--muted);font-size:12px}
+main{max-width:1100px;margin:auto;padding:20px 15px 40px}.welcome{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}.welcome h2{margin:0;font-size:24px}.welcome p{margin:4px 0 0;color:var(--muted)}
+button,input,select{font:inherit}button{border:1px solid var(--line);border-radius:10px;padding:10px 13px;background:var(--panel2);color:var(--text);cursor:pointer}button.primary{background:var(--lime);color:#17210c;border-color:var(--lime);font-weight:750}button.danger{color:#ffb1b1}button:active{transform:scale(.98)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:16px 0}.stat,.panel{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:16px}.stat span{color:var(--muted);font-size:12px}.stat strong{display:block;font-size:24px;margin-top:5px}.stat small{color:var(--lime)}
+.layout{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}.panel{margin-bottom:14px}.panel h3{margin:0 0 12px;font-size:17px}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:10px 7px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-weight:600}td:last-child{white-space:nowrap}.table-wrap{overflow-x:auto}
+.pill{display:inline-block;padding:3px 8px;border-radius:20px;background:#263448;color:#dbe9f7;font-size:11px}.pill.available{background:#243b21;color:#c9ff9b}.pill.reserved{background:#42391d;color:#ffe3a0}
+form{display:grid;gap:10px}label{display:grid;gap:5px;color:var(--muted);font-size:12px}input,select{width:100%;min-width:0;border:1px solid var(--line);border-radius:9px;padding:11px;background:#0c1420;color:var(--text)}.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.empty{color:var(--muted);padding:14px 0}.note{color:var(--muted);font-size:12px;margin:8px 0 0}
+.leads{display:grid;gap:9px}.lead{padding:11px;border:1px solid var(--line);border-radius:10px;display:flex;justify-content:space-between;gap:10px;align-items:center}.lead strong{display:block}.lead small{color:var(--muted)}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:10px}
+@media(max-width:720px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.layout{grid-template-columns:1fr}.welcome h2{font-size:21px}.stat strong{font-size:21px}header{padding:16px}.panel{padding:13px}th,td{padding:9px 6px}}
+</style>
+</head>
+<body>
+<header><div class="brand"><div class="logo">M</div><div><h1>AI Moto Business</h1><p>Gestión inteligente para concesionarias de motos</p></div></div></header>
+<main>
+<section class="welcome"><div><h2>Panel de control</h2><p>Tu negocio de motos, organizado en un solo lugar.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button id="exportBtn">Exportar datos</button><button class="primary" id="resetBtn">Restaurar demo</button></div></section>
+<section class="stats">
+<div class="stat"><span>Motos en inventario</span><strong id="bikeCount">0</strong><small>Unidades registradas</small></div>
+<div class="stat"><span>Disponibles</span><strong id="availableCount">0</strong><small>Listas para vender</small></div>
+<div class="stat"><span>Clientes</span><strong id="clientCount">0</strong><small>Contactos registrados</small></div>
+<div class="stat"><span>Consultas abiertas</span><strong id="leadCount">0</strong><small>Oportunidades de venta</small></div>
+</section>
+<div class="layout">
+<div>
+<section class="panel"><div class="panel-head"><h3>🏍️ Inventario de motos</h3></div>
+<form id="bikeForm">
+<div class="form-row"><label>Marca<input id="brand" required placeholder="Honda"></label><label>Modelo<input id="model" required placeholder="Wave 110"></label></div>
+<div class="form-row"><label>Año<input id="year" type="number" min="1950" max="2100" required placeholder="2025"></label><label>Precio (ARS)<input id="price" type="number" min="0" required placeholder="2500000"></label></div>
+<label>Estado<select id="status"><option>Disponible</option><option>Reservada</option><option>Vendida</option></select></label>
+<button class="primary" type="submit">+ Agregar moto</button>
+</form><p class="note">Los datos se guardan en este navegador. Esta demo no usa todavía una base de datos compartida.</p>
+</section>
+<section class="panel"><div class="panel-head"><h3>📋 Inventario registrado</h3><span class="pill" id="inventoryLabel">0 motos</span></div><div class="table-wrap"><table><thead><tr><th>Moto</th><th>Año</th><th>Precio</th><th>Estado</th><th></th></tr></thead><tbody id="bikeRows"></tbody></table></div><div id="bikeEmpty" class="empty" hidden>No hay motos registradas todavía.</div></section>
+</div>
+<div>
+<section class="panel"><h3>👥 Registrar cliente</h3><form id="clientForm"><label>Nombre<input id="clientName" required placeholder="Nombre del cliente"></label><label>Teléfono<input id="clientPhone" placeholder="Código de área y número"></label><label>Modelo de interés<input id="clientInterest" placeholder="Honda Wave 110"></label><button class="primary" type="submit">+ Agregar cliente</button></form></section>
+<section class="panel"><div class="panel-head"><h3>🎯 Consultas de venta</h3><span class="pill" id="leadLabel">0 consultas</span></div><div id="leadList" class="leads"></div><div id="leadEmpty" class="empty" hidden>No hay consultas registradas.</div></section>
+<section class="panel"><h3>📁 Clientes registrados</h3><div class="table-wrap"><table><thead><tr><th>Cliente</th><th>Teléfono</th><th>Interés</th><th></th></tr></thead><tbody id="clientRows"></tbody></table></div><div id="clientEmpty" class="empty" hidden>No hay clientes registrados.</div></section>
+</div>
+</div>
+<footer>AI Moto Business · Módulo 1 · Prototipo inicial</footer>
+</main>
+<script>
+const KEY='aiMotoBusiness_v1';
+const demo={bikes:[{id:1,brand:'Honda',model:'Wave 110 S',year:2024,price:1850000,status:'Disponible'},{id:2,brand:'Yamaha',model:'FZ FI',year:2023,price:3200000,status:'Reservada'},{id:3,brand:'Bajaj',model:'Rouser NS 200',year:2025,price:4500000,status:'Disponible'}],clients:[{id:1,name:'Cliente demo',phone:'',interest:'Honda Wave 110 S'}],leads:[{id:1,client:'Cliente demo',bike:'Honda Wave 110 S',status:'Nuevo contacto'}]};
+let data;
+try{data=JSON.parse(localStorage.getItem(KEY))||structuredClone(demo)}catch(e){data=JSON.parse(JSON.stringify(demo))}
+const money=n=>new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(n);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function save(){localStorage.setItem(KEY,JSON.stringify(data));render()}
+function render(){
+document.getElementById('bikeCount').textContent=data.bikes.length;
+document.getElementById('availableCount').textContent=data.bikes.filter(b=>b.status==='Disponible').length;
+document.getElementById('clientCount').textContent=data.clients.length;
+document.getElementById('leadCount').textContent=data.leads.filter(l=>l.status!=='Cerrado').length;
+document.getElementById('inventoryLabel').textContent=data.bikes.length+' motos';
+document.getElementById('leadLabel').textContent=data.leads.length+' consultas';
+document.getElementById('bikeEmpty').hidden=data.bikes.length>0;
+document.getElementById('bikeRows').innerHTML=data.bikes.map(b=>`<tr><td><strong>${esc(b.brand)} ${esc(b.model)}</strong></td><td>${b.year}</td><td>${money(b.price)}</td><td><select aria-label="Estado de ${esc(b.model)}" onchange="changeBike(${b.id},this.value)">${['Disponible','Reservada','Vendida'].map(s=>`<option ${b.status===s?'selected':''}>${s}</option>`).join('')}</select></td><td><button class="danger" onclick="deleteBike(${b.id})" aria-label="Eliminar ${esc(b.model)}">✕</button></td></tr>`).join('');
+document.getElementById('clientEmpty').hidden=data.clients.length>0;
+document.getElementById('clientRows').innerHTML=data.clients.map(c=>`<tr><td>${esc(c.name)}</td><td>${esc(c.phone||'—')}</td><td>${esc(c.interest||'—')}</td><td><button class="danger" onclick="deleteClient(${c.id})" aria-label="Eliminar cliente">✕</button></td></tr>`).join('');
+document.getElementById('leadEmpty').hidden=data.leads.length>0;
+document.getElementById('leadList').innerHTML=data.leads.map(l=>`<div class="lead"><div><strong>${esc(l.client)}</strong><small>${esc(l.bike)}</small></div><select aria-label="Estado de consulta" onchange="changeLead(${l.id},this.value)">${['Nuevo contacto','En seguimiento','Cerrado'].map(s=>`<option ${l.status===s?'selected':''}>${s}</option>`).join('')}</select></div>`).join('');
+}
+document.getElementById('bikeForm').addEventListener('submit',e=>{e.preventDefault();data.bikes.push({id:Date.now(),brand:document.getElementById('brand').value.trim(),model:document.getElementById('model').value.trim(),year:Number(document.getElementById('year').value),price:Number(document.getElementById('price').value),status:document.getElementById('status').value});e.target.reset();save()});
+document.getElementById('clientForm').addEventListener('submit',e=>{e.preventDefault();const c={id:Date.now(),name:document.getElementById('clientName').value.trim(),phone:document.getElementById('clientPhone').value.trim(),interest:document.getElementById('clientInterest').value.trim()};data.clients.push(c);data.leads.push({id:Date.now()+1,client:c.name,bike:c.interest||'Sin modelo definido',status:'Nuevo contacto'});e.target.reset();save()});
+window.changeBike=(id,status)=>{data.bikes=data.bikes.map(b=>b.id===id?{...b,status}:b);save()};
+window.deleteBike=id=>{if(confirm('¿Eliminar esta moto?')){data.bikes=data.bikes.filter(b=>b.id!==id);save()}};
+window.deleteClient=id=>{if(confirm('¿Eliminar este cliente?')){data.clients=data.clients.filter(c=>c.id!==id);save()}};
+window.changeLead=(id,status)=>{data.leads=data.leads.map(l=>l.id===id?{...l,status}:l);save()};
+document.getElementById('exportBtn').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ai-moto-business-datos.json';a.click();URL.revokeObjectURL(a.href)});
+document.getElementById('resetBtn').addEventListener('click',()=>{if(confirm('¿Restaurar los datos de demostración? Esto reemplazará los datos guardados en este navegador.')){data=JSON.parse(JSON.stringify(demo));save()}});
+render();
+</script>
+</body>
+</html>
